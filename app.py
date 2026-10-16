@@ -16,7 +16,7 @@ import dart
 import price as price_mod
 import sec
 
-APP_VERSION = "2026-10-15 v13"
+APP_VERSION = "2026-10-16 v14"
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 KEY_FILE = os.path.join(APP_DIR, "api_key.txt")
 DATA_KEY_FILE = os.path.join(APP_DIR, "data_key.txt")
@@ -57,6 +57,8 @@ table.fs tr.ratio td {color: #5EC4E8;}
 table.fs tr.ratio td:first-child {cursor: help;}
 table.fs tr.sep td {border-top: 2px solid #4A515C;}
 table.fs td.neg {color: #E8705E;}
+/* 웹 공개 버전: 오른쪽 위 GitHub·Fork·메뉴 버튼 숨김 (왼쪽 사이드바 여닫기 버튼은 유지) */
+[data-testid="stToolbar"], [data-testid="stToolbarActions"], .stAppDeployButton, .stDeployButton {display: none !important;}
 table.fs a {color: #5EC4E8; text-decoration: none;}
 table.fs a:hover {text-decoration: underline;}
 table.disc td, table.disc th {text-align: left !important; white-space: normal;}
@@ -383,7 +385,8 @@ if is_us:
     try:
         tick = c_sec_tickers(sec_contact)
     except Exception as e:
-        st.error(f"SEC 종목 목록을 받지 못했습니다: {e}")
+        st.error("미국 데이터(SEC)에 지금 접속할 수 없습니다. 잠시 후 다시 시도해 주세요." if PUBLIC_MODE
+                 else f"SEC 종목 목록을 받지 못했습니다: {e}")
         st.stop()
     with c_search:
         q = st.text_input("티커 또는 영문 회사명", value=st.session_state.get("last_q_us", "MRVL"), key="q_us")
@@ -408,7 +411,8 @@ if is_us:
         with st.spinner("SEC에서 재무제표를 가져오는 중..."):
             facts = c_sec_facts(cik, sec_contact)
     except Exception as e:
-        st.error(f"SEC 오류: {e}")
+        st.error("미국 데이터(SEC)에 지금 접속할 수 없습니다. 잠시 후 다시 시도해 주세요." if PUBLIC_MODE
+                 else f"SEC 오류: {e}")
         st.stop()
     if not facts or not (facts.get("facts") or {}).get("us-gaap"):
         st.warning("이 회사는 미국 회계기준(US-GAAP) 재무 데이터가 없습니다. 외국 기업(20-F 제출, 예: TSMC ADR)은 아직 지원하지 않아요.")
