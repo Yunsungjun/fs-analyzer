@@ -16,7 +16,7 @@ import dart
 import price as price_mod
 import sec
 
-APP_VERSION = "2026-10-16 v14"
+APP_VERSION = "2026-10-16 v15"
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 KEY_FILE = os.path.join(APP_DIR, "api_key.txt")
 DATA_KEY_FILE = os.path.join(APP_DIR, "data_key.txt")
@@ -60,6 +60,21 @@ table.fs td.neg {color: #E8705E;}
 /* 웹 공개 버전: 오른쪽 위 GitHub·Fork·메뉴 버튼 숨김 (왼쪽 사이드바 여닫기 버튼은 유지) */
 [data-testid="stToolbar"], [data-testid="stToolbarActions"], .stAppDeployButton, .stDeployButton {display: none !important;}
 table.fs a {color: #5EC4E8; text-decoration: none;}
+/* 표를 옆으로 넘겨도 계정 이름 칸은 고정 */
+table.fs th:first-child, table.fs td:first-child {position: sticky; left: 0; background: #2A2F36; z-index: 1; box-shadow: 1px 0 0 #4A515C;}
+table.disc th:first-child, table.disc td:first-child {position: static;}
+/* 모바일: 검색 조건을 2칸씩 배치, 표·카드 글자 조금 작게 */
+.st-key-controls [data-testid="stHorizontalBlock"] {flex-wrap: wrap !important; row-gap: .4rem;}
+@media (max-width: 640px) {
+  .st-key-controls [data-testid="stColumn"], .st-key-controls [data-testid="column"] {
+    width: calc(50% - .5rem) !important; flex: 1 1 calc(50% - .5rem) !important; min-width: calc(50% - .5rem) !important;}
+  table.fs {font-size: .82rem;}
+  table.fs td, table.fs th {padding: 6px 8px;}
+  table.fs tr.l1 td:first-child {padding-left: 16px;}
+  table.fs tr.l2 td:first-child {padding-left: 24px;}
+  .kpi .v {font-size: 1.15rem;}
+  .block-container {padding-left: 1rem; padding-right: 1rem;}
+}
 table.fs a:hover {text-decoration: underline;}
 table.disc td, table.disc th {text-align: left !important; white-space: normal;}
 .tag {display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: #353B44; color: #C9CFD8;}
@@ -355,7 +370,8 @@ with st.sidebar:
 st.markdown("#### 📊 재무제표 분석기")
 st.caption("국내·미국 상장사의 재무제표를 공시 원문(DART·SEC) 그대로 보고, 주요 재무비율을 자동으로 계산해 줍니다. "
            "투자 권유가 아닌 공부·참고용입니다.")
-c_mkt, c_search, c_freq, c_n, c_unit, c_fs = st.columns([1.3, 3.4, 1.4, 1, 1.3, 1.4])
+with st.container(key="controls"):
+    c_mkt, c_search, c_freq, c_n, c_unit, c_fs = st.columns([1.6, 3.1, 1.4, 1, 1.3, 1.4])
 with c_mkt:
     market = st.segmented_control("시장", ["국내", "미국"], default="국내", key="market") or "국내"
 is_us = market == "미국"
